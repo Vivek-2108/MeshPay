@@ -17,4 +17,12 @@ const { publicKey, privateKey }=
         
         });
 
-module.exports={publicKey,privateKey};
+module.exports={
+    getPublicKey(){
+        return publicKey;
+    },
+    
+    getPrivateKey(){
+       return privateKey;
+    }
+};
