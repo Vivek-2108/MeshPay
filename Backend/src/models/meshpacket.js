@@ -32,11 +32,20 @@ const meshpacketSchema=mongoose.Schema(
         uploaded:{
             type:Boolean,
             default:false
-        }
+        },
+        route:[{
+            type:String
+        }]
     },
     {
-        timestamp:true
+        timestamp:true,
+        versionKey:false
     }
 );
 
 module.exports=mongoose.model("meshpacket",meshpacketSchema);
+
+
+//Improvement -- insead of just bridge we want to know whole journey of packet(later we can visualize it ) 
+/* should add route to store whole journey */
+

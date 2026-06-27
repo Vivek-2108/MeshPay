@@ -2,6 +2,12 @@ const mongoose=require("mongoose");
 
 const transactionSchema = mongoose.Schema(
     {
+        transactionId:{
+            type:String,
+            required:true,
+            unique:true
+        },
+
         sender:{
             type:mongoose.Schema.Types.ObjectId,
             ref:"account",
@@ -56,8 +62,12 @@ const transactionSchema = mongoose.Schema(
 
     },
     {
-        timestamp:true 
+        timestamp:true,
+        versionKey:false
     }
 );
 
 module.exports=mongoose.model("transaction",transactionSchema);
+
+
+// improvement needed -- Instead of sender and receiver store Account referenceswith help of transactionId

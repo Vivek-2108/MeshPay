@@ -20,7 +20,7 @@ const idempotencySchema = new mongoose.Schema(
         }
     },
     {
-        timestamps: false
+        versionKey:false
     }
 );
 

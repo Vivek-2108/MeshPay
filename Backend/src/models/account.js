@@ -10,8 +10,15 @@ const accountSchema=mongoose.Schema(
         unique:true
     },
 
+    accountNumber:{
+        type:String,
+        required:true,
+        unique:true
+    },
+
     balance:{
         type:Number,
+        required:true,
         default:10000,
         min:0
     },
@@ -30,7 +37,8 @@ const accountSchema=mongoose.Schema(
 
   },
   {
-    timestamp:true
+    timestamp:true,
+    versionKey:false
   }
 );
 
