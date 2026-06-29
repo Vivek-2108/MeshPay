@@ -1,0 +1,11 @@
+module.exports = {
+
+    DEFAULT_TTL: 5,
+
+    MAX_PACKET_QUEUE_SIZE: 1000,
+
+    GOSSIP_INTERVAL: 3000,
+
+    MAX_NEIGHBORS: 10
+
+};

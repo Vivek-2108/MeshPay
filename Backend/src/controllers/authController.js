@@ -4,51 +4,64 @@ const bcrypt = require("bcryptjs");
 
 const generateToken = require("../utils/generateToken");
 
+const Account = require("../models/account");
+
 // logic for register 
 
 exports.register = async (req, res) => {
-
     try {
         const { name, email, password } = req.body;
-        const existingUser = await User.findOne({ email });
 
         if (!name || !email || !password) {
             return res.status(400).json({ message: "Name, email, and password are required" });
         }
 
+        const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({
                 message: "User already exists"
             });
         }
 
-        //hash(pass from req.body , salt round)
+        // hash password
         const hashedPassword = await bcrypt.hash(password, 10);
-        /*
-            const sanitizedName = name.replace(/\s+/g, "").toLowerCase();
-            // Option A: Append a small random number
-            const uniqueSuffix = Math.floor(1000 + Math.random() * 9000);
-            const vpa = `${sanitizedName}${uniqueSuffix}@upimesh`;
 
-        */
-        const user = await User.create({  //line 1
+        // Sanitize name for VPA generation (remove spaces and special chars)
+        const sanitizedName = name.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+        let vpa = `${sanitizedName}@upimesh`;
+
+        // Prevent duplicate VPAs
+        const existingVpa = await User.findOne({ vpa });
+        if (existingVpa) {
+            const uniqueSuffix = Math.floor(1000 + Math.random() * 9000);
+            vpa = `${sanitizedName}${uniqueSuffix}@upimesh`;
+        }
+
+        const user = await User.create({
             name,
             email,
             password: hashedPassword,
-            vpa: `${name.toLowerCase()}@upimesh`
+            vpa
         });
-        //send a response back to the client:   :: 201 --> meaing created --> new resource created
-        res.status(201).json({
+
+        // Generate default active account with starting balance
+        const accountNumber = Math.floor(100000000000 + Math.random() * 900000000000).toString();
+        await Account.create({
+            user: user._id,
+            accountNumber,
+            balance: 10000,
+            currency: "INR",
+            status: "ACTIVE"
+        });
+
+        // Send response
+        return res.status(201).json({
             _id: user._id,
             name: user.name,
             email: user.email,
-            token: generateToken(user._id)   // why this --> Many applications automatically log in the user immediately after registration.
+            vpa: user.vpa,
+            token: generateToken(user._id)
         });
-
-        res.send({
-            msg:"Registered sucessfully"
-        });
-
 
     } catch (error) {
         // Internal Server Error 
@@ -56,7 +69,6 @@ exports.register = async (req, res) => {
             message: error.message
         });
     }
-
 };
 
 
@@ -91,5 +103,4 @@ exports.login = async (req, res) => {
             message: error.message
         });
     }
-
 };
