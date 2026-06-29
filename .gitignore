@@ -64,3 +64,7 @@ out/
 .firebase/
 .serverless/
 .dynamodb/
+
+
+#crypto keys
+Backend/src/crypto/keys/*.pem
